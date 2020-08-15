@@ -1,0 +1,22 @@
+﻿@page "/authentication/test"
+@inject HttpClient Http
+
+<input name="test" placeholder="message" @bind="message" />
+<button @onclick="SendMessage">send</button>
+
+reponse: @response
+
+@code
+{
+    private string response;
+    private string message;
+
+    private async Task SendMessage()
+    {
+        var parameters = new Dictionary<string, string>();
+        parameters["message"] = message;
+        var kurwojebana = await Http.PostAsync("api/test", new FormUrlEncodedContent(parameters));
+
+        response = await kurwojebana.Content.ReadAsStringAsync();
+    }
+}
