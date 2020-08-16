@@ -5,10 +5,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using CheckNote.Shared.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Diagnostics;
 using System.Net.Http;
 using System;
 using Microsoft.AspNetCore.Components;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using CheckNote.Server.Services;
 
 namespace CheckNote.Server
 {
@@ -37,15 +41,36 @@ namespace CheckNote.Server
                 .AddRoles<Role>()
                 .AddDefaultTokenProviders();
 
+            services.AddAuthentication(config =>
+            {
+                config.RequireAuthenticatedSignIn = false;
+                config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(config =>
+                {
+                    config.RequireHttpsMetadata = false; // development
+                    // config.SaveToken = true;
+
+                    config.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                    };
+                });
+
+            // cookie added by identity
+
             services.AddControllersWithViews();
             services.AddRazorPages();
 
-            services.AddScoped(s => 
+            services.AddScoped(services => 
                 new HttpClient
                 {
-                    BaseAddress = new Uri(s.GetRequiredService<NavigationManager>().BaseUri)
+                    BaseAddress = new Uri(services.GetRequiredService<NavigationManager>().BaseUri)
                 }
             );
+
+            services.AddScoped<JwtService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<Role> roleManager)
@@ -65,20 +90,24 @@ namespace CheckNote.Server
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
 
+            app.UseAuthentication();
+
             app.UseRouting();
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
-                endpoints.MapControllers();
                 endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
                 endpoints.MapFallbackToPage("/Index");
             });
 
-            // do this when adding user to a role
+            // do this when adding user to a role !
             if (!roleManager.RoleExistsAsync(Role.Admin).Result)
             {
-                roleManager.CreateAsync(new Role { Name = Role.Admin });
+                roleManager.CreateAsync(new Role { Name = Role.Admin }).Wait();
             }
         }
     }

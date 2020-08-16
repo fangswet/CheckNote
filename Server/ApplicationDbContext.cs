@@ -30,25 +30,23 @@ namespace CheckNote.Server
                 .Property(a => a.Correct)
                 .HasDefaultValue(true);
 
-            builder.Entity<Question>()
-                .Property(q => q.Correct)
-                .HasDefaultValue(true);
+            builder.Entity<User>(user =>
+            {
+                user.HasIndex(u => u.Email).IsUnique();
+                user.HasIndex(u => u.UserName).IsUnique();
+            });
 
-            builder.Entity<Question>()
-                .Property(q => q.Difficulty)
-                .HasDefaultValue(QuestionDifficulty.Easy);
+            builder.Entity<Question>(question =>
+            {
+                question.Property(q => q.Correct).HasDefaultValue(true);
+                question.Property(q => q.Difficulty).HasDefaultValue(QuestionDifficulty.Easy);
+            });
 
-            builder.Entity<CourseNote>()
-                .HasOne(cn => cn.Course)
-                .WithMany(c => c.Notes)
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired();
-
-            builder.Entity<CourseNote>()
-                .HasOne(cn => cn.Note)
-                .WithMany(n => n.Courses)
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired();
+            builder.Entity<CourseNote>(courseNote =>
+            {
+                courseNote.HasOne(cn => cn.Course).WithMany(c => c.Notes).OnDelete(DeleteBehavior.Restrict).IsRequired();
+                courseNote.HasOne(cn => cn.Note).WithMany(n => n.Courses).OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
         }
 
         public DbSet<Note> Notes { get; set; }

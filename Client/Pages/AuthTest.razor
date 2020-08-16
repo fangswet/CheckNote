@@ -1,22 +1,26 @@
 ﻿@page "/authentication/test"
 @inject HttpClient Http
 
-<input name="test" placeholder="message" @bind="message" />
-<button @onclick="SendMessage">send</button>
+@using CheckNote.Shared.Models;
+
+<input @bind="email" />
+<input @bind="password" />
+<button @onclick="Login">send</button>
 
 reponse: @response
 
 @code
 {
     private string response;
-    private string message;
+    private string email;
+    private string password;
 
-    private async Task SendMessage()
+    private async Task Login()
     {
-        var parameters = new Dictionary<string, string>();
-        parameters["message"] = message;
-        var kurwojebana = await Http.PostAsync("api/test", new FormUrlEncodedContent(parameters));
+        //var user = new User { Email = email };
 
-        response = await kurwojebana.Content.ReadAsStringAsync();
+        //var request = await Http.PostAsJsonAsync<User>("login", user);
+
+        //response = await request.Content.ReadAsStringAsync();
     }
 }
