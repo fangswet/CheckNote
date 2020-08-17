@@ -30,11 +30,11 @@ namespace CheckNote.Server
                 .Property(a => a.Correct)
                 .HasDefaultValue(true);
 
-            builder.Entity<User>(user =>
-            {
-                user.HasIndex(u => u.Email).IsUnique();
-                user.HasIndex(u => u.UserName).IsUnique();
-            });
+            //builder.Entity<User>(user =>
+            //{
+            //    user.HasIndex(u => u.Email).IsUnique();
+            //    user.HasIndex(u => u.UserName).IsUnique();
+            //});
 
             builder.Entity<Question>(question =>
             {

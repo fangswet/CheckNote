@@ -68,7 +68,8 @@ namespace CheckNote.Server.Controllers
 
             await userManager.CreateAsync(user, password);
 
-            return RedirectToAction("Login", new { user, password });
+            //return RedirectToAction("Login", new { user, password });
+            return Ok();
         }
 
         [HttpPost]
@@ -98,6 +99,12 @@ namespace CheckNote.Server.Controllers
             }
 
             return Unauthorized();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Me()
+        {
+            return Ok(await userManager.GetUserAsync(HttpContext.User));
         }
     }
 }

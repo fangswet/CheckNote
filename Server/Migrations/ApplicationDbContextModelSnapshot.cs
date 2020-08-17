@@ -66,7 +66,7 @@ namespace CheckNote.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Course");
+                    b.ToTable("Courses");
                 });
 
             modelBuilder.Entity("CheckNote.Shared.Models.CourseNote", b =>

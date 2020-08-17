@@ -28,6 +28,7 @@ namespace CheckNote.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>();
+            services.AddHttpContextAccessor();
 
             services.AddIdentity<User, Role>(config =>
             {
@@ -44,21 +45,18 @@ namespace CheckNote.Server
             services.AddAuthentication(config =>
             {
                 config.RequireAuthenticatedSignIn = false;
-                config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
                 .AddJwtBearer(config =>
                 {
                     config.RequireHttpsMetadata = false; // development
-                    // config.SaveToken = true;
+                    config.SaveToken = true;
 
                     config.TokenValidationParameters = new TokenValidationParameters
                     {
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])),
+                        RequireAudience = false, ValidateAudience = false, ValidateIssuer = false
                     };
                 });
-
-            // cookie added by identity
 
             services.AddControllersWithViews();
             services.AddRazorPages();

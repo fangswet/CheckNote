@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CheckNote.Server.Migrations
 {
-    public partial class Start : Migration
+    public partial class update : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -172,7 +172,7 @@ namespace CheckNote.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Course",
+                name: "Courses",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -183,9 +183,9 @@ namespace CheckNote.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Course", x => x.Id);
+                    table.PrimaryKey("PK_Courses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Course_AspNetUsers_UserId",
+                        name: "FK_Courses_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -255,9 +255,9 @@ namespace CheckNote.Server.Migrations
                 {
                     table.PrimaryKey("PK_CourseNote", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CourseNote_Course_CourseId",
+                        name: "FK_CourseNote_Courses_CourseId",
                         column: x => x.CourseId,
-                        principalTable: "Course",
+                        principalTable: "Courses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -335,11 +335,6 @@ namespace CheckNote.Server.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Course_UserId",
-                table: "Course",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CourseNote_CourseId",
                 table: "CourseNote",
                 column: "CourseId");
@@ -348,6 +343,11 @@ namespace CheckNote.Server.Migrations
                 name: "IX_CourseNote_NoteId",
                 table: "CourseNote",
                 column: "NoteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Courses_UserId",
+                table: "Courses",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notes_AuthorId",
@@ -398,7 +398,7 @@ namespace CheckNote.Server.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Course");
+                name: "Courses");
 
             migrationBuilder.DropTable(
                 name: "Notes");
