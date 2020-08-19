@@ -10,8 +10,6 @@ using System;
 using Microsoft.AspNetCore.Components;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using System.Diagnostics;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using CheckNote.Server.Services;
 
 namespace CheckNote.Server
@@ -59,6 +57,7 @@ namespace CheckNote.Server
                 });
 
             services.AddControllersWithViews();
+            
             services.AddRazorPages();
 
             services.AddScoped(services => 

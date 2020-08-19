@@ -10,9 +10,9 @@ namespace CheckNote.Shared.Models
         public int Id { get; set; }
 
         [Required]
-        public Course Course { get; set; }
+        public virtual Course Course { get; set; }
 
         [Required]
-        public Note Note { get; set; }
+        public virtual Note Note { get; set; }
     }
 }

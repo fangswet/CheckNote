@@ -19,7 +19,9 @@ namespace CheckNote.Server
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            optionsBuilder
+                .UseLazyLoadingProxies()
+                .UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -30,11 +32,14 @@ namespace CheckNote.Server
                 .Property(a => a.Correct)
                 .HasDefaultValue(true);
 
-            //builder.Entity<User>(user =>
-            //{
-            //    user.HasIndex(u => u.Email).IsUnique();
-            //    user.HasIndex(u => u.UserName).IsUnique();
-            //});
+            builder.Entity<Note>()
+                .HasOne(n => n.Parent).WithMany(n => n.Children).OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<User>(user =>
+            {
+                user.HasIndex(u => u.Email).IsUnique();
+                user.HasIndex(u => u.UserName).IsUnique();
+            });
 
             builder.Entity<Question>(question =>
             {

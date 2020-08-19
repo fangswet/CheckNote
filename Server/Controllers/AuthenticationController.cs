@@ -100,11 +100,5 @@ namespace CheckNote.Server.Controllers
 
             return Unauthorized();
         }
-
-        [Authorize]
-        public async Task<IActionResult> Me()
-        {
-            return Ok(await userManager.GetUserAsync(HttpContext.User));
-        }
     }
 }

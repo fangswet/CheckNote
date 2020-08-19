@@ -17,7 +17,7 @@ namespace CheckNote.Shared.Models
         public SourceType Type { get; set; }
 
         [Required]
-        public Note Note { get; set; }
+        public virtual Note Note { get; set; }
     }
 
     public enum SourceType

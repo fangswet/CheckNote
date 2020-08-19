@@ -10,13 +10,33 @@ namespace CheckNote.Shared.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-
         [Required]
         public string Text { get; set; }
+        public bool? Correct { get; set; }
+        [Required]
+        public int QuestionId { get; set; }
+        public virtual Question Question { get; set; }
 
+        public static implicit operator AnswerModel(Answer answer) => new AnswerModel
+        {
+            Id = answer.Id,
+            Text = answer.Text,
+            QuestionId = answer.QuestionId
+        };
+    }
+
+    public class AnswerModel
+    {
+        public int Id { get; set; }
+        [Required]
+        public string Text { get; set; }
+        public int QuestionId { get; set; }
         public bool? Correct { get; set; }
 
-        [Required]
-        public Question Question { get; set; }
+        public static implicit operator Answer(AnswerModel model) => new Answer
+        {
+            Text = model.Text,
+            Correct = model.Correct
+        };
     }
 }

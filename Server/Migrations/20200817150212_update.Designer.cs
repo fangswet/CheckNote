@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CheckNote.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200816193756_update")]
+    [Migration("20200817150212_update")]
     partial class update
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -270,6 +270,10 @@ namespace CheckNote.Server.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
+
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
@@ -277,6 +281,10 @@ namespace CheckNote.Server.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("UserName")
+                        .IsUnique()
+                        .HasFilter("[UserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -424,8 +432,9 @@ namespace CheckNote.Server.Migrations
                         .IsRequired();
 
                     b.HasOne("CheckNote.Shared.Models.Note", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("CheckNote.Shared.Models.Source", b =>

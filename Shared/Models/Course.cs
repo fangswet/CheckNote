@@ -15,8 +15,8 @@ namespace CheckNote.Shared.Models
         public string Description { get; set; }
 
         [Required]
-        public User User { get; set; }
+        public virtual User User { get; set; }
 
-        public List<CourseNote> Notes { get; }
+        public virtual List<CourseNote> Notes { get; }
     }
 }
