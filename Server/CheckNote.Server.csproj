@@ -23,6 +23,20 @@
     <Compile Remove="Migrations\20200817145146_update.Designer.cs" />
     <Compile Remove="Migrations\20200817145436_update.cs" />
     <Compile Remove="Migrations\20200817145436_update.Designer.cs" />
+    <Compile Remove="Migrations\20200817150212_update.cs" />
+    <Compile Remove="Migrations\20200817150212_update.Designer.cs" />
+    <Compile Remove="Migrations\20200819101953_update.cs" />
+    <Compile Remove="Migrations\20200819101953_update.Designer.cs" />
+    <Compile Remove="Migrations\20200819170127_update.cs" />
+    <Compile Remove="Migrations\20200819170127_update.Designer.cs" />
+    <Compile Remove="Migrations\20200821093931_update.cs" />
+    <Compile Remove="Migrations\20200821093931_update.Designer.cs" />
+    <Compile Remove="Migrations\20200821094845_update.cs" />
+    <Compile Remove="Migrations\20200821094845_update.Designer.cs" />
+    <Compile Remove="Migrations\20200821150031_update.cs" />
+    <Compile Remove="Migrations\20200821150031_update.Designer.cs" />
+    <Compile Remove="Migrations\20200821150258_update.cs" />
+    <Compile Remove="Migrations\20200821150258_update.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,10 +55,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Client\CheckNote.Client.csproj" />
     <ProjectReference Include="..\Shared\CheckNote.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\Api\" />
   </ItemGroup>
 
 

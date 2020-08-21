@@ -2,20 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using CheckNote.Shared.Models;
 using System.Threading.Tasks;
-using System.Text.Json;
-using System.Diagnostics;
-using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
 using System;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using CheckNote.Server.Services;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace CheckNote.Server.Controllers
 {

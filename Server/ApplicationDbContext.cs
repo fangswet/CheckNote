@@ -49,8 +49,21 @@ namespace CheckNote.Server
 
             builder.Entity<CourseNote>(courseNote =>
             {
-                courseNote.HasOne(cn => cn.Course).WithMany(c => c.Notes).OnDelete(DeleteBehavior.Restrict).IsRequired();
-                courseNote.HasOne(cn => cn.Note).WithMany(n => n.Courses).OnDelete(DeleteBehavior.Restrict).IsRequired();
+                courseNote.HasOne(cn => cn.Course).WithMany(c => c.CourseNotes).OnDelete(DeleteBehavior.Restrict).IsRequired();
+                courseNote.HasOne(cn => cn.Note).WithMany(n => n.CourseNotes).OnDelete(DeleteBehavior.Restrict).IsRequired();
+            });
+
+            builder.Entity<CourseLike>(courseLike =>
+            {
+                courseLike.HasOne(cl => cl.Course).WithMany(c => c.Likes).OnDelete(DeleteBehavior.Restrict);
+                courseLike.HasOne(cl => cl.User).WithMany(u => u.Likes).OnDelete(DeleteBehavior.Restrict);
+            });
+
+            builder.Entity<TestResult>(testResult =>
+            {
+                testResult.Property(tr => tr.Timestamp).HasDefaultValueSql("CURRENT_TIMESTAMP");
+                testResult.HasOne(tr => tr.Course).WithMany(c => c.TestResults).OnDelete(DeleteBehavior.Restrict);
+                testResult.HasOne(tr => tr.User).WithMany(u => u.TestResults).OnDelete(DeleteBehavior.Restrict);
             });
         }
 
@@ -59,6 +72,6 @@ namespace CheckNote.Server
         public DbSet<Answer> Answers { get; set; }
         public DbSet<Source> Sources { get; set; }
         public DbSet<Course> Courses { get; set; }
-
+        public DbSet<TestResult> TestResults { get; set; }
     }
 }

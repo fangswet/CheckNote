@@ -49,23 +49,6 @@ namespace CheckNote.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Questions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(nullable: false),
-                    Content = table.Column<string>(nullable: true),
-                    Type = table.Column<int>(nullable: false),
-                    Correct = table.Column<bool>(nullable: true, defaultValue: true),
-                    Difficulty = table.Column<int>(nullable: false, defaultValue: 0)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Questions", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -179,14 +162,14 @@ namespace CheckNote.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: true),
-                    UserId = table.Column<int>(nullable: false)
+                    AuthorId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Courses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Courses_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Courses_AspNetUsers_AuthorId",
+                        column: x => x.AuthorId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -222,24 +205,57 @@ namespace CheckNote.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Answers",
+                name: "CourseLike",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Text = table.Column<string>(nullable: false),
-                    Correct = table.Column<bool>(nullable: true, defaultValue: true),
-                    QuestionId = table.Column<int>(nullable: false)
+                    CourseId = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Answers", x => x.Id);
+                    table.PrimaryKey("PK_CourseLike", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Answers_Questions_QuestionId",
-                        column: x => x.QuestionId,
-                        principalTable: "Questions",
+                        name: "FK_CourseLike_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_CourseLike_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TestResult",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CourseId = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: false),
+                    Result = table.Column<int>(nullable: false),
+                    Timestamp = table.Column<DateTime>(nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TestResult", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TestResult_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TestResult_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -269,6 +285,30 @@ namespace CheckNote.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Questions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(nullable: false),
+                    NoteId = table.Column<int>(nullable: false),
+                    Content = table.Column<string>(nullable: true),
+                    Type = table.Column<int>(nullable: false),
+                    Correct = table.Column<bool>(nullable: true, defaultValue: true),
+                    Difficulty = table.Column<int>(nullable: false, defaultValue: 1)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Questions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Questions_Notes_NoteId",
+                        column: x => x.NoteId,
+                        principalTable: "Notes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Sources",
                 columns: table => new
                 {
@@ -286,6 +326,27 @@ namespace CheckNote.Server.Migrations
                         name: "FK_Sources_Notes_NoteId",
                         column: x => x.NoteId,
                         principalTable: "Notes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Answers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Text = table.Column<string>(nullable: false),
+                    Correct = table.Column<bool>(nullable: true, defaultValue: true),
+                    QuestionId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Answers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Answers_Questions_QuestionId",
+                        column: x => x.QuestionId,
+                        principalTable: "Questions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -349,6 +410,16 @@ namespace CheckNote.Server.Migrations
                 filter: "[UserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CourseLike_CourseId",
+                table: "CourseLike",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseLike_UserId",
+                table: "CourseLike",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CourseNote_CourseId",
                 table: "CourseNote",
                 column: "CourseId");
@@ -359,9 +430,9 @@ namespace CheckNote.Server.Migrations
                 column: "NoteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Courses_UserId",
+                name: "IX_Courses_AuthorId",
                 table: "Courses",
-                column: "UserId");
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notes_AuthorId",
@@ -374,9 +445,24 @@ namespace CheckNote.Server.Migrations
                 column: "ParentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Questions_NoteId",
+                table: "Questions",
+                column: "NoteId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Sources_NoteId",
                 table: "Sources",
                 column: "NoteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestResult_CourseId",
+                table: "TestResult",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestResult_UserId",
+                table: "TestResult",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -400,10 +486,16 @@ namespace CheckNote.Server.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CourseLike");
+
+            migrationBuilder.DropTable(
                 name: "CourseNote");
 
             migrationBuilder.DropTable(
                 name: "Sources");
+
+            migrationBuilder.DropTable(
+                name: "TestResult");
 
             migrationBuilder.DropTable(
                 name: "Questions");

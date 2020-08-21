@@ -8,7 +8,9 @@ namespace CheckNote.Shared.Models
 {
     public class User : IdentityUser<int>
     {
-        public virtual List<Note> Notes { get; }
+        public virtual List<Note> Notes { get; set; }
+        public virtual List<CourseLike> Likes { get; set; }
+        public virtual List<TestResult> TestResults { get; set; }
 
         public static implicit operator UserModel(User user) => new UserModel
         {

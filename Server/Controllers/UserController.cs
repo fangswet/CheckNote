@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace CheckNote.Server.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase
@@ -36,13 +37,25 @@ namespace CheckNote.Server.Controllers
             return Ok(user.Notes.Select(n => (NoteModel)n));
         }
 
-        [Authorize]
         [Route("[action]")]
         public async Task<IActionResult> Me()
         {
             UserModel me = await userManager.GetUserAsync(HttpContext.User);
 
             return Ok(me);
+        }
+
+        [Authorize(Roles = Role.Admin)]
+        [Route("[action]/{id:int}")]
+        public async Task<IActionResult> Elevate(int id)
+        {
+            var user = await userManager.FindByIdAsync(id.ToString());
+
+            if (user == null) return NotFound();
+
+            await userManager.AddToRoleAsync(user, Role.Admin);
+
+            return Ok();
         }
     }
 }

@@ -47,10 +47,10 @@ namespace CheckNote.Server.Controllers
             if (note.ParentId != null && await notes.FindAsync(note.ParentId) == null) 
                 return BadRequest();
             
-            NoteModel result = (await notes.AddAsync(note)).Entity;
+            var result = await notes.AddAsync(note);
             await dbContext.SaveChangesAsync();
 
-            return Ok(result);
+            return Ok(result.Entity.Id);
         }
 
         [Route("{id:int}/[action]")]
@@ -61,6 +61,14 @@ namespace CheckNote.Server.Controllers
             if (note == null) return NotFound();
 
             return Ok(note.Questions);
+        }
+
+        [Route("{id:int}/[action]")]
+        public async Task<IActionResult> Practice(int id, AnswerAttempt[] answers)
+        {
+            var note = await notes.FindAsync(id);
+
+            return Ok(note.Test(answers));
         }
 
         //[HttpDelete]

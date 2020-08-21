@@ -39,4 +39,12 @@ namespace CheckNote.Shared.Models
             Correct = model.Correct
         };
     }
+
+    public class AnswerAttempt
+    {
+        public int QuestionId { get; set; }
+        public bool? Correct { get; set; }
+        public int[] CorrectAnswers { get; set; }
+        public string[] CorrectInputs { get; set; }
+    }
 }

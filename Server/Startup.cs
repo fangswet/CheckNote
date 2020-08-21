@@ -56,6 +56,8 @@ namespace CheckNote.Server
                     };
                 });
 
+            services.ConfigureApplicationCookie(options => options.LoginPath = "/");
+
             services.AddControllersWithViews();
             
             services.AddRazorPages();
@@ -70,7 +72,7 @@ namespace CheckNote.Server
             services.AddScoped<JwtService>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<Role> roleManager)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<Role> roleManager, UserManager<User> userManager)
         {
             if (env.IsDevelopment())
             {
@@ -105,6 +107,16 @@ namespace CheckNote.Server
             if (!roleManager.RoleExistsAsync(Role.Admin).Result)
             {
                 roleManager.CreateAsync(new Role { Name = Role.Admin }).Wait();
+            }
+
+            var admin = userManager.FindByNameAsync("admin").Result;
+
+            if (admin == null)
+            {
+                var newAdmin = new User { UserName = "admin", Email = "admin@admin.com" };
+
+                userManager.CreateAsync(newAdmin, "admin").Wait();
+                userManager.AddToRoleAsync(newAdmin, Role.Admin).Wait();
             }
         }
     }

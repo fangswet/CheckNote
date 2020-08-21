@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CheckNote.Shared.Models
 {
-    public class CourseNote
+    public class CourseLike
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -12,6 +12,6 @@ namespace CheckNote.Shared.Models
         public virtual Course Course { get; set; }
 
         [Required]
-        public virtual Note Note { get; set; }
+        public virtual User User { get; set; }
     }
 }

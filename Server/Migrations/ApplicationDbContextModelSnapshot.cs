@@ -52,6 +52,9 @@ namespace CheckNote.Server.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -59,14 +62,33 @@ namespace CheckNote.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("CheckNote.Shared.Models.CourseLike", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CourseId");
+
                     b.HasIndex("UserId");
 
-                    b.ToTable("Courses");
+                    b.ToTable("CourseLike");
                 });
 
             modelBuilder.Entity("CheckNote.Shared.Models.CourseNote", b =>
@@ -142,7 +164,10 @@ namespace CheckNote.Server.Migrations
                     b.Property<int>("Difficulty")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasDefaultValue(0);
+                        .HasDefaultValue(1);
+
+                    b.Property<int>("NoteId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -152,6 +177,8 @@ namespace CheckNote.Server.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("NoteId");
 
                     b.ToTable("Questions");
                 });
@@ -210,6 +237,36 @@ namespace CheckNote.Server.Migrations
                     b.HasIndex("NoteId");
 
                     b.ToTable("Sources");
+                });
+
+            modelBuilder.Entity("CheckNote.Shared.Models.TestResult", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Result")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Timestamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TestResult");
                 });
 
             modelBuilder.Entity("CheckNote.Shared.Models.User", b =>
@@ -399,23 +456,38 @@ namespace CheckNote.Server.Migrations
 
             modelBuilder.Entity("CheckNote.Shared.Models.Course", b =>
                 {
-                    b.HasOne("CheckNote.Shared.Models.User", "User")
+                    b.HasOne("CheckNote.Shared.Models.User", "Author")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CheckNote.Shared.Models.CourseLike", b =>
+                {
+                    b.HasOne("CheckNote.Shared.Models.Course", "Course")
+                        .WithMany("Likes")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CheckNote.Shared.Models.User", "User")
+                        .WithMany("Likes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("CheckNote.Shared.Models.CourseNote", b =>
                 {
                     b.HasOne("CheckNote.Shared.Models.Course", "Course")
-                        .WithMany("Notes")
+                        .WithMany("CourseNotes")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CheckNote.Shared.Models.Note", "Note")
-                        .WithMany("Courses")
+                        .WithMany("CourseNotes")
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -435,12 +507,36 @@ namespace CheckNote.Server.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
+            modelBuilder.Entity("CheckNote.Shared.Models.Question", b =>
+                {
+                    b.HasOne("CheckNote.Shared.Models.Note", "Note")
+                        .WithMany("Questions")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CheckNote.Shared.Models.Source", b =>
                 {
                     b.HasOne("CheckNote.Shared.Models.Note", "Note")
-                        .WithMany()
+                        .WithMany("Sources")
                         .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CheckNote.Shared.Models.TestResult", b =>
+                {
+                    b.HasOne("CheckNote.Shared.Models.Course", "Course")
+                        .WithMany("TestResults")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CheckNote.Shared.Models.User", "User")
+                        .WithMany("TestResults")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
