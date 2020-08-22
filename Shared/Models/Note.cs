@@ -24,25 +24,6 @@ namespace CheckNote.Shared.Models
         public virtual List<Question> Questions { get; set; }
         public virtual List<Source> Sources { get; set; }
 
-        public int Test(AnswerAttempt[] answers)
-        {
-            if (Questions.Count == 0) return 0;
-
-            var fullScore = Questions.Select(q => (int)q.Difficulty).Sum();
-            int score = 0;
-
-            foreach (var answer in answers)
-            {
-                var question = Questions.FirstOrDefault(q => q.Id == answer.QuestionId);
-                if (question != null && question.Answer(answer))
-                {
-                    score += (int)question.Difficulty;
-                }
-            }
-
-            return (int)(score / (double)fullScore * 100);
-        }
-
         public static implicit operator NoteModel(Note note) => new NoteModel
         {
             Id = note.Id,

@@ -57,5 +57,9 @@
     <ProjectReference Include="..\Shared\CheckNote.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\GraphQl\" />
+  </ItemGroup>
+
 
 </Project>

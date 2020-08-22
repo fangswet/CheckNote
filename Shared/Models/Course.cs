@@ -19,36 +19,6 @@ namespace CheckNote.Shared.Models
         public virtual List<CourseLike> Likes { get; set; }
         public virtual List<TestResult> TestResults { get; set; }
 
-        public List<Question> Questions()
-        {
-            var questions = new List<Question>();
-
-            CourseNotes.ForEach(cn => questions.AddRange(cn.Note.Questions));
-
-            return questions;
-        }
-
-        public int Test(AnswerAttempt[] answers)
-        {
-            var questions = Questions();
-
-            if (questions.Count == 0) return 0;
-
-            var fullScore = questions.Select(q => (int)q.Difficulty).Sum();
-            var score = 0;
-
-            foreach (var answer in answers)
-            {
-                var question = questions.Find(q => q.Id == answer.QuestionId);
-                if (question != null && question.Answer(answer))
-                {
-                    score += (int)question.Difficulty;
-                }
-            }
-
-            return (int)(score / (double)fullScore * 100);
-        }
-
         public static implicit operator CourseModel(Course course) => new CourseModel
         {
             Id = course.Id,

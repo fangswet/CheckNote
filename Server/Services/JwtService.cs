@@ -19,14 +19,11 @@ namespace CheckNote.Server.Services
     {
         private readonly UserManager<User> userManager;
         private readonly IConfiguration configuration;
-        private readonly HttpContext httpContext;
 
-        public JwtService(UserManager<User> userManager, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public JwtService(UserManager<User> userManager, IConfiguration configuration)
         {
             this.userManager = userManager;
-            this.configuration = configuration;
-            httpContext = httpContextAccessor.HttpContext;
-        }
+            this.configuration = configuration;        }
 
         public async Task<string> GenerateToken(User user)
         {

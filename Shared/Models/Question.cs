@@ -33,40 +33,6 @@ namespace CheckNote.Shared.Models
             Difficulty = question.Difficulty,
             Answers = question.Answers.Select(a => (AnswerModel)a).ToList()
         };
-
-        public bool Answer(AnswerAttempt attempt)
-        {
-            if (Type == QuestionType.Binary)
-            {
-                return attempt.Correct != null && Correct == attempt.Correct;
-            }
-
-            switch (Type)
-            {
-                case QuestionType.Single:
-                case QuestionType.Multiple:
-
-                    if (attempt.CorrectAnswers == null) return false;
-
-                    var correctAnswers = Answers
-                        .Where(a => (bool)a.Correct)
-                        .Select(a => a.Id)
-                        .ToArray();
-
-                    return attempt.CorrectAnswers.SequenceEqual(correctAnswers);
-
-                case QuestionType.SingleInput:
-                case QuestionType.MultipleInput:
-
-                    if (attempt.CorrectInputs == null) return false;
-
-                    var correctInputs = Answers.Select(a => a.Text).ToArray();
-
-                    return attempt.CorrectInputs.SequenceEqual(correctInputs);
-            }
-
-            return false;
-        }
     }
 
     public class QuestionModel

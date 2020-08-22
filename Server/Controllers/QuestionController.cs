@@ -1,18 +1,14 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Castle.Core.Internal;
+﻿using System.Threading.Tasks;
 using CheckNote.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CheckNote.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = AuthenticationScheme.All)]
     public class QuestionController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;

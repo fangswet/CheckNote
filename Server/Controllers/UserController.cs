@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace CheckNote.Server.Controllers
 {
-    [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = AuthenticationScheme.All)]
     public class UserController : ControllerBase
     {
         private readonly UserManager<User> userManager;

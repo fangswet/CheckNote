@@ -1,92 +1,28 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using CheckNote.Shared.Models;
+﻿using CheckNote.Server.Services;
+using CheckNote.Shared.Models.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System;
-using CheckNote.Server.Services;
 
 namespace CheckNote.Server.Controllers
 {
-    [Route("[action]")]
+    [AllowAnonymous]
+    [Route("api/[action]")]
     public class AuthenticationController : ControllerBase
     {
-        private readonly UserManager<User> userManager;
-        private readonly SignInManager<User> signInManager;
-        private readonly JwtService jwt;
+        private readonly AuthenticationService authService;
 
-        public AuthenticationController(UserManager<User> userManager, SignInManager<User> signInManager, JwtService jwt)
+        public AuthenticationController(AuthenticationService authService)
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
-            this.jwt = jwt;
+            this.authService = authService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string email, string password)
-        {
-            if (String.IsNullOrEmpty(email) || String.IsNullOrEmpty(password))
-                return BadRequest();
-
-            var user = await userManager.FindByEmailAsync(email);
-
-            if (user != null)
-            {
-                var result = await signInManager.PasswordSignInAsync(user, password, false, false);
-
-                if (result.Succeeded) return Ok();
-            }
-
-            return Unauthorized();
-        }
+        public async Task<IActionResult> Register(RegisterModel user) => await authService.Register(user);
 
         [HttpPost]
-        public async Task<IActionResult> Register(string email, string username, string password)
-        {
-            if (String.IsNullOrEmpty(email) || String.IsNullOrEmpty(username) || String.IsNullOrEmpty(password))
-                return BadRequest();
+        public async Task<IActionResult> Login(LoginModel user) => await authService.Login(user);
 
-            if ((await userManager.FindByEmailAsync(email)) != null || (await userManager.FindByNameAsync(username)) != null)
-                return Conflict();
-
-            var user = new User
-            {
-                Email = email,
-                UserName = username
-            };
-
-            await userManager.CreateAsync(user, password);
-
-            //return RedirectToAction("Login", new { user, password });
-            return Ok();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Logout()
-        {
-            await signInManager.SignOutAsync();
-
-            return Ok();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Jwt(string email, string password)
-        {
-            if (String.IsNullOrEmpty(email) || String.IsNullOrEmpty(password)) 
-                return BadRequest();
-
-            var user = await userManager.FindByEmailAsync(email);
-
-            if (user != null)
-            {
-                var result = await signInManager.CheckPasswordSignInAsync(user, password, false);
-
-                if (result.Succeeded)
-                {
-                    return Ok(await jwt.GenerateToken(user));
-                }
-            }
-
-            return Unauthorized();
-        }
+        public async Task<IActionResult> Logout() => await authService.Logout();
     }
 }

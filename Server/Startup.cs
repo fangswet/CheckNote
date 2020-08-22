@@ -70,6 +70,7 @@ namespace CheckNote.Server
             );
 
             services.AddScoped<JwtService>();
+            services.AddScoped<AuthenticationService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, RoleManager<Role> roleManager, UserManager<User> userManager)

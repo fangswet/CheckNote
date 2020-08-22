@@ -1,75 +1,44 @@
 ﻿using System.Threading.Tasks;
 using CheckNote.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using CheckNote.Server.Services;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace CheckNote.Server.Controllers
 {
-    [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = AuthenticationScheme.All)]
     public class NoteController : ControllerBase
     {
+        private readonly NoteService noteService;
         private readonly DbSet<Note> notes;
-        private readonly ApplicationDbContext dbContext;
-        private readonly UserManager<User> userManager;
 
-        public NoteController(ApplicationDbContext dbContext, UserManager<User> userManager)
+        public NoteController(NoteService noteService, ApplicationDbContext dbContext)
         {
+            this.noteService = noteService;
             notes = dbContext.Notes;
-            this.dbContext = dbContext;
-            this.userManager = userManager;
         }
 
         [AllowAnonymous]
+        public async Task<IActionResult> Get() => Ok(await notes.ToListAsync());
+
         [Route("{id}")]
         public async Task<IActionResult> Get(int id)
-        {
-            NoteModel note = await notes.FirstOrDefaultAsync(n => n.Id == id);
-
-            if (note == null) return NotFound();
-
-            return Ok(note);
-        }
-
-        [AllowAnonymous]
-        public IActionResult Get() => Ok(notes.Select(n => (NoteModel)n));
+            => await noteService.Get(id);
 
         [HttpPost]
-        public async Task<IActionResult> Add(NoteModel input)
-        {
-            Note note = input;
-            note.Author = await userManager.GetUserAsync(HttpContext.User);
-
-            if (note.ParentId != null && await notes.FindAsync(note.ParentId) == null) 
-                return BadRequest();
-            
-            var result = await notes.AddAsync(note);
-            await dbContext.SaveChangesAsync();
-
-            return Ok(result.Entity.Id);
-        }
+        public async Task<IActionResult> Add(NoteModel input) 
+            => await noteService.Add(input);
 
         [Route("{id:int}/[action]")]
         public async Task<IActionResult> Questions(int id)
-        {
-            var note = await notes.FindAsync(id);
-
-            if (note == null) return NotFound();
-
-            return Ok(note.Questions);
-        }
+            => await noteService.GetQuestions(id);
 
         [Route("{id:int}/[action]")]
         public async Task<IActionResult> Practice(int id, AnswerAttempt[] answers)
-        {
-            var note = await notes.FindAsync(id);
-
-            return Ok(note.Test(answers));
-        }
+            => await noteService.Practice(id, answers);
 
         //[HttpDelete]
         //[Route("{id}")]
