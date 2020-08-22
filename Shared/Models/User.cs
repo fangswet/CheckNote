@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace CheckNote.Shared.Models
 {
-    public class User : IdentityUser<int>
+    public class User : IdentityUser<int>, ICheckNoteModel<UserModel>
     {
         public virtual List<Note> Notes { get; set; }
         public virtual List<CourseLike> Likes { get; set; }

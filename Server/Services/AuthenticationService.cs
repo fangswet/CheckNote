@@ -2,12 +2,11 @@
 using CheckNote.Shared.Models.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 namespace CheckNote.Server.Services
 {
-    public class AuthenticationService : CheckNoteService
+    public class AuthenticationService
     {
         private readonly UserManager<User> userManager;
         private readonly SignInManager<User> signInManager;
@@ -22,18 +21,22 @@ namespace CheckNote.Server.Services
 
         public async Task<ServiceResult> Login(LoginModel input)
         {
+            var result = new ServiceResult();
+
             var user = await userManager.FindByEmailAsync(input.Email);
-            if (user == null) return Unauthorized();
+            if (user == null) return result.Unauthorized();
 
-            var result = await signInManager.PasswordSignInAsync(user, input.Password, false, false);
+            var login = await signInManager.PasswordSignInAsync(user, input.Password, false, false);
 
-            return result.Succeeded ? Ok() : Unauthorized();
+            return login.Succeeded ? result.Ok() : result.Unauthorized();
         }
 
         public async Task<ServiceResult> Register(RegisterModel input)
         {
+            var result = new ServiceResult();
+
             if ((await userManager.FindByEmailAsync(input.Email)) != null || (await userManager.FindByNameAsync(input.UserName)) != null)
-                return Conflict("user already exists");
+                return result.Conflict("user already exists");
 
             var user = new User
             {
@@ -43,25 +46,27 @@ namespace CheckNote.Server.Services
 
             await userManager.CreateAsync(user, input.Password);
 
-            return Ok();
+            return result.Ok();
         }
 
         public async Task<ServiceResult> Logout()
         {
             await signInManager.SignOutAsync();
 
-            return Ok();
+            return new ServiceResult().Ok();
         }
 
         [HttpPost]
         public async Task<ServiceResult<string>> Jwt(LoginModel input)
         {
+            var result = new ServiceResult<string>();
+
             var user = await userManager.FindByEmailAsync(input.Email);
-            if (user == null) return Unauthorized<string>();
+            if (user == null) return result.Unauthorized();
 
             await signInManager.CheckPasswordSignInAsync(user, input.Password, false);
 
-            return Ok(await jwtService.GenerateToken(user));
+            return result.Ok(await jwtService.GenerateToken(user));
         }
     }
 }

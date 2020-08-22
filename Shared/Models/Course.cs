@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace CheckNote.Shared.Models
 {
-    public class Course
+    public class Course : ICheckNoteModel<CourseModel>
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -19,13 +19,15 @@ namespace CheckNote.Shared.Models
         public virtual List<CourseLike> Likes { get; set; }
         public virtual List<TestResult> TestResults { get; set; }
 
-        public static implicit operator CourseModel(Course course) => new CourseModel
+        public CourseModel Sanitize() => new CourseModel
         {
-            Id = course.Id,
-            Title = course.Title,
-            Description = course.Description,
-            Author = course.Author
+            Id = Id,
+            Title = Title,
+            Description = Description,
+            Author = Author
         };
+
+        public static implicit operator CourseModel(Course course) => course.Sanitize();
     }
 
     public class CourseModel

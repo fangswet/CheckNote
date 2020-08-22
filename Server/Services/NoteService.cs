@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CheckNote.Server.Services
 {
-    public class NoteService : CheckNoteService
+    public class NoteService
     {
         private readonly ApplicationDbContext dbContext;
         private readonly UserManager<User> userManager;
@@ -25,45 +25,52 @@ namespace CheckNote.Server.Services
             httpContext = httpContextAccessor.HttpContext;
         }
 
-        public async Task<ServiceResult<Note>> Get(int id)
+        public async Task<ServiceResult<Note, NoteModel>> Get(int id)
         {
+            var result = new ServiceResult<Note, NoteModel>();
+
             var note = await notes.FindAsync(id);
 
-            if (note == null) return NotFound<Note>();
+            if (note == null) return result.NotFound();
 
-            return Ok(note);
+            return result.Ok(note);
         }
 
         public async Task<ServiceResult<int>> Add(NoteModel input)
         {
+            var result = new ServiceResult<int>();
+
             Note note = input;
             note.Author = await userManager.GetUserAsync(httpContext.User);
 
             if (note.ParentId != null && await notes.FindAsync(note.ParentId) == null)
-                return BadRequest<int>("parent does not exist");
+                return result.BadRequest("parent does not exist");
 
-            var result = await notes.AddAsync(note);
+            var added = await notes.AddAsync(note);
             await dbContext.SaveChangesAsync();
 
-            return Ok(result.Entity.Id);
+            return result.Ok(added.Entity.Id);
         }
 
         public async Task<ServiceResult<List<Question>>> GetQuestions(int id)
         {
+            var result = new ServiceResult<List<Question>>();
             var note = await notes.FindAsync(id);
 
-            if (note == null) return NotFound<List<Question>>();
+            if (note == null) return result.NotFound();
 
-            return Ok(note.Questions);
+            return result.Ok(note.Questions);
         }
 
         public async Task<ServiceResult<int>> Practice(int id, AnswerAttempt[] answers)
         {
+            var result = new ServiceResult<int>();
+
             var note = await notes.FindAsync(id);
 
-            if (note == null) return NotFound<int>();
+            if (note == null) return result.NotFound();
 
-            return Ok(note.Practice(answers));
+            return result.Ok(note.Practice(answers));
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace CheckNote.Shared.Models
 {
-    public class Note
+    public class Note : ICheckNoteModel<NoteModel>
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -24,17 +24,19 @@ namespace CheckNote.Shared.Models
         public virtual List<Question> Questions { get; set; }
         public virtual List<Source> Sources { get; set; }
 
-        public static implicit operator NoteModel(Note note) => new NoteModel
+        public NoteModel Sanitize() => new NoteModel
         {
-            Id = note.Id,
-            Title = note.Title,
-            Description = note.Description,
-            Content = note.Content,
-            ParentId = note.ParentId,
-            Children = note.Children.Select(child => (NoteModel)child).ToList(),
-            Author = note.Author,
-            Sources = note.Sources.Select(s => (SourceModel)s).ToList()
+            Id = Id,
+            Title = Title,
+            Description = Description,
+            Content = Content,
+            ParentId = ParentId,
+            Children = Children.Select(child => (NoteModel)child).ToList(),
+            Author = Author,
+            Sources = Sources.Select(s => (SourceModel)s).ToList()
         };
+
+        public static implicit operator NoteModel(Note note) => note.Sanitize();
     }
 
     public class NoteModel

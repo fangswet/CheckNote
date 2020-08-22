@@ -18,11 +18,14 @@ namespace CheckNote.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterModel user) => await authService.Register(user);
+        public async Task<IActionResult> Register(RegisterModel user) 
+            => await authService.Register(user);
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginModel user) => await authService.Login(user);
+        public async Task<IActionResult> Login(LoginModel user) 
+            => await authService.Login(user);
 
-        public async Task<IActionResult> Logout() => await authService.Logout();
+        public async Task<IActionResult> Logout() 
+            => await authService.Logout();
     }
 }

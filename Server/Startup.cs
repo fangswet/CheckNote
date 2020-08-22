@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CheckNote.Server.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace CheckNote.Server
 {
@@ -58,7 +61,16 @@ namespace CheckNote.Server
 
             services.ConfigureApplicationCookie(options => options.LoginPath = "/");
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(options =>
+            {
+                var schemes = new[] { IdentityConstants.ApplicationScheme, JwtBearerDefaults.AuthenticationScheme };
+
+                var policy = new AuthorizationPolicyBuilder()
+                    .AddAuthenticationSchemes(schemes)
+                    .RequireAuthenticatedUser();
+
+                options.Filters.Add(new AuthorizeFilter(policy.Build()));
+            });
             
             services.AddRazorPages();
 

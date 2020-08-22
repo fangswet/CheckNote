@@ -11,7 +11,6 @@ namespace CheckNote.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = AuthenticationScheme.All)]
     public class CourseController : ControllerBase
     {
         private readonly CourseService courseService;

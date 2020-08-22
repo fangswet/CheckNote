@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CheckNote.Shared.Models
 {
-    public class Question
+    public class Question : ICheckNoteModel<QuestionModel>
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -22,17 +22,19 @@ namespace CheckNote.Shared.Models
         public QuestionDifficulty Difficulty { get; set; }
         public virtual List<Answer> Answers { get; set; }
 
-        public static implicit operator QuestionModel(Question question) => new QuestionModel
+        public QuestionModel Sanitize() => new QuestionModel
         {
-            Id = question.Id,
-            Title = question.Title,
-            NoteId = question.NoteId,
-            Content = question.Content,
-            Type = question.Type,
-            Correct = question.Correct,
-            Difficulty = question.Difficulty,
-            Answers = question.Answers.Select(a => (AnswerModel)a).ToList()
+            Id = Id,
+            Title = Title,
+            NoteId = NoteId,
+            Content = Content,
+            Type = Type,
+            Correct = Correct,
+            Difficulty = Difficulty,
+            Answers = Answers.Select(a => (AnswerModel)a).ToList()
         };
+
+        public static implicit operator QuestionModel(Question question) => question.Sanitize();
     }
 
     public class QuestionModel

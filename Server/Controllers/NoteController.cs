@@ -9,7 +9,6 @@ namespace CheckNote.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = AuthenticationScheme.All)]
     public class NoteController : ControllerBase
     {
         private readonly NoteService noteService;
@@ -22,7 +21,8 @@ namespace CheckNote.Server.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Get() => Ok(await notes.ToListAsync());
+        public async Task<IActionResult> Get() 
+            => Ok(await notes.ToListAsync());
 
         [Route("{id}")]
         public async Task<IActionResult> Get(int id)

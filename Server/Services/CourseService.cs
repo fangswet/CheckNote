@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace CheckNote.Server.Services
 {
-    public class CourseService : CheckNoteService
+    public class CourseService
     {
         private readonly ApplicationDbContext dbContext;
         private readonly DbSet<Course> courses;
@@ -27,29 +27,35 @@ namespace CheckNote.Server.Services
 
         public async Task<ServiceResult<Course>> Get(int id)
         {
+            var result = new ServiceResult<Course, CourseModel>();
+
             var course = await courses.FindAsync(id);
 
-            if (course == null) return NotFound<Course>();
+            if (course == null) return result.NotFound();
 
-            return Ok(course);
+            return result.Ok(course);
         }
 
         public async Task<ServiceResult<List<Note>>> GetNotes(int id)
         {
+            var result = new ServiceResult<List<Note>>();
+
             var course = await courses.FindAsync(id);
 
-            if (course == null) return NotFound<List<Note>>();
+            if (course == null) return result.NotFound();
 
-            return Ok(course.GetNotes());
+            return result.Ok(course.GetNotes());
         }
 
         public async Task<ServiceResult<List<Question>>> GetQuestions(int id)
         {
+            var result = new ServiceResult<List<Question>>();
+
             var course = await courses.FindAsync(id);
 
-            if (course == null) return NotFound<List<Question>>();
+            if (course == null) return result.NotFound();
 
-            return Ok(course.GetQuestions());
+            return result.Ok(course.GetQuestions());
         }
 
         public async Task<ServiceResult<int>> Add(CourseModel input)
@@ -60,73 +66,81 @@ namespace CheckNote.Server.Services
 
             course.AuthorId = user.Id;
 
-            var result = await courses.AddAsync(course);
+            var added = await courses.AddAsync(course);
             await dbContext.SaveChangesAsync();
 
-            return Ok(result.Entity.Id);
+            return new ServiceResult<int>().Ok(added.Entity.Id);
         }
 
         public async Task<ServiceResult> AddNote(int id, int noteId)
         {
+            var result = new ServiceResult();
+
             var course = await courses.FindAsync(id);
 
-            if (course == null) return NotFound();
+            if (course == null) return result.NotFound();
 
             var note = await dbContext.Notes.FindAsync(noteId);
 
-            if (note == null) return NotFound();
+            if (note == null) return result.NotFound();
 
             course.CourseNotes.Add(new CourseNote { Course = course, Note = note });
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return result.Ok();
         }
 
         public async Task<ServiceResult> Like(int id)
         {
+            var result = new ServiceResult();
+
             var course = await courses.FindAsync(id);
 
-            if (course == null) return NotFound();
+            if (course == null) return result.NotFound();
 
             var user = await userManager.GetUserAsync(httpContext.User);
 
-            if (course.Author.Id == user.Id) return BadRequest();
+            if (course.Author.Id == user.Id) return result.BadRequest();
 
             var courseLike = course.Likes.FirstOrDefault(cl => cl.User.Id == user.Id);
 
-            if (courseLike != null) return BadRequest();
+            if (courseLike != null) return result.BadRequest();
 
             course.Likes.Add(new CourseLike { Course = course, User = user });
             await dbContext.SaveChangesAsync();
 
-            return Ok();
+            return result.Ok();
         }
 
         public async Task<ServiceResult<int>> Practice(int id, AnswerAttempt[] answers)
         {
-            var course = await courses.FindAsync(id);
-            if (course == null) return NotFound<int>();
+            var result = new ServiceResult<int>();
 
-            return Ok(course.Practice(answers));
+            var course = await courses.FindAsync(id);
+            if (course == null) return result.NotFound();
+
+            return result.Ok(course.Practice(answers));
         }
 
         public async Task<ServiceResult<int>> Test(int id, AnswerAttempt[] answers)
         {
-            var course = await courses.FindAsync(id);
-            if (course == null) return NotFound<int>();
+            var result = new ServiceResult<int>();
 
-            var result = course.Practice(answers);
+            var course = await courses.FindAsync(id);
+            if (course == null) return result.NotFound();
+
+            var score = course.Practice(answers);
 
             dbContext.TestResults.Add(new TestResult
             {
                 Course = course,
                 User = await userManager.GetUserAsync(httpContext.User),
-                Result = result
+                Result = score
             });
 
             await dbContext.SaveChangesAsync();
 
-            return Ok(result);
+            return result.Ok(score);
         }
     }
 }
