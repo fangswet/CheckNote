@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using CheckNote.Server.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
 
 namespace CheckNote.Server.Controllers
 {
@@ -22,17 +24,14 @@ namespace CheckNote.Server.Controllers
 
         [AllowAnonymous]
         public async Task<IActionResult> Get() 
-            => Ok(await notes.ToListAsync());
+            => Ok(await notes.Select(n => n.Sanitize()).ToListAsync());
 
         [Route("{id}")]
         public async Task<IActionResult> Get(int id)
         {
             var serviceResult = await noteService.Get(id);
 
-            var sr = serviceResult.Sanitize();
-            var ar = Ok(serviceResult.Sanitize().Value);
-
-            return ar;
+            return serviceResult.Sanitize();
         }
 
         [HttpPost]
@@ -41,7 +40,11 @@ namespace CheckNote.Server.Controllers
 
         [Route("{id:int}/[action]")]
         public async Task<IActionResult> Questions(int id)
-            => await noteService.GetQuestions(id);
+        {
+            var serviceResult = await noteService.GetQuestions(id);
+
+            return serviceResult;
+        }
 
         [Route("{id:int}/[action]")]
         public async Task<IActionResult> Practice(int id, AnswerAttempt[] answers)

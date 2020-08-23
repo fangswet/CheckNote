@@ -50,9 +50,9 @@ namespace CheckNote.Server.Services
             return result.Ok(added.Entity.Id);
         }
 
-        public async Task<ServiceResult<List<Question>>> GetQuestions(int id)
+        public async Task<ListServiceResult<Question, QuestionModel>> GetQuestions(int id)
         {
-            var result = new ServiceResult<List<Question>>();
+            var result = new ListServiceResult<Question, QuestionModel>();
             var note = await notes.FindAsync(id);
 
             if (note == null) return result.NotFound();

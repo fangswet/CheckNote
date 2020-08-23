@@ -1,23 +1,26 @@
 ﻿using CheckNote.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CheckNote.Server.Services
 {
     public class ServiceResult<T> : ObjectResult
     {
-        public new T Value 
+        public new T Value
         {
             get => (T)base.Value;
-            protected set => base.Value = value; 
+            protected set => base.Value = value;
         }
-        
-        public new int StatusCode 
-        { 
-            get => (int)base.StatusCode; 
-            protected set => base.StatusCode = value; 
+
+        public new int StatusCode
+        {
+            get => (int)base.StatusCode;
+            protected set => base.StatusCode = value;
         }
-        
+
         public string Message { get; set; }
 
         public ServiceResult() : base(null)
@@ -51,8 +54,8 @@ namespace CheckNote.Server.Services
     }
 
     public class ServiceResult<TEntity, TModel> : ServiceResult<TModel>
-    where TEntity : ICheckNoteModel<TModel>
-    where TModel : class
+        where TEntity : ICheckNoteModel<TModel>
+        where TModel : class
     {
         public TEntity Entity { get; private set; }
 
@@ -101,8 +104,6 @@ namespace CheckNote.Server.Services
 
     public class ServiceResult : ServiceResult<object>
     {
-        private new object Value { get; set; }
-
         protected ServiceResult SetOk(string message)
         {
             base.Ok(message);
@@ -165,5 +166,53 @@ namespace CheckNote.Server.Services
     public class UnauthorizedServiceResult : ServiceResult
     {
         public UnauthorizedServiceResult(string message = null) => SetUnauthorized(message);
+    }
+
+    public class ListServiceResult<TEntity, TModel> : ServiceResult<List<TModel>>
+        where TEntity : ICheckNoteModel<TModel>
+    {
+        public List<TEntity> Entities { get; private set; }
+
+        public ListServiceResult()
+        { }
+
+        public ListServiceResult(int statusCode, List<TEntity> value = default, string message = null)
+            : base(statusCode, default, message)
+        {
+            Entities = value;
+        }
+
+        public ListServiceResult<TEntity, TModel> Ok(List<TEntity> value = default, string message = null)
+        {
+            base.Ok(null, message);
+            Entities = value;
+            return this;
+        }
+        public new ListServiceResult<TEntity, TModel> NotFound(string message = null)
+        {
+            base.NotFound(message);
+            return this;
+        }
+        public new ListServiceResult<TEntity, TModel> Conflict(string message = null)
+        {
+            base.Conflict(message);
+            return this;
+        }
+        public new ListServiceResult<TEntity, TModel> BadRequest(string message = null)
+        {
+            base.BadRequest(message);
+            return this;
+        }
+        public new ListServiceResult<TEntity, TModel> Unauthorized(string message = null)
+        {
+            base.Unauthorized(message);
+            return this;
+        }
+        public ListServiceResult<TEntity, TModel> Sanitize()
+        {
+            Value = Entities?.Select(e => e.Sanitize()).ToList();
+
+            return this;
+        }
     }
 }
