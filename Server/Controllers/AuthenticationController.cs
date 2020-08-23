@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace CheckNote.Server.Controllers
 {
     [AllowAnonymous]
+    [ApiController]
     [Route("api/[action]")]
     public class AuthenticationController : ControllerBase
     {
@@ -22,7 +23,7 @@ namespace CheckNote.Server.Controllers
             => await authService.Register(user);
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginModel user) 
+        public async Task<IActionResult> Login(LoginModel user)
             => await authService.Login(user);
 
         public async Task<IActionResult> Logout() 

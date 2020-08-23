@@ -1,10 +1,6 @@
 ﻿using CheckNote.Server.Services.Extensions;
 using CheckNote.Shared.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CheckNote.Server.Services
@@ -12,13 +8,11 @@ namespace CheckNote.Server.Services
     public class QuestionService
     {
         private readonly ApplicationDbContext dbContext;
-        private readonly UserManager<User> userManager;
         private readonly DbSet<Question> questions;
 
-        public QuestionService(ApplicationDbContext dbContext, UserManager<User> userManager)
+        public QuestionService(ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;
-            this.userManager = userManager;
             questions = dbContext.Questions;
         }
 

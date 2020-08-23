@@ -25,7 +25,7 @@ namespace CheckNote.Server.Services
             httpContext = httpContextAccessor.HttpContext;
         }
 
-        public async Task<ServiceResult<Course>> Get(int id)
+        public async Task<ServiceResult<Course, CourseModel>> Get(int id)
         {
             var result = new ServiceResult<Course, CourseModel>();
 
@@ -74,42 +74,38 @@ namespace CheckNote.Server.Services
 
         public async Task<ServiceResult> AddNote(int id, int noteId)
         {
-            var result = new ServiceResult();
-
             var course = await courses.FindAsync(id);
 
-            if (course == null) return result.NotFound();
+            if (course == null) return ServiceResult.NotFound();
 
             var note = await dbContext.Notes.FindAsync(noteId);
 
-            if (note == null) return result.NotFound();
+            if (note == null) return ServiceResult.NotFound();
 
             course.CourseNotes.Add(new CourseNote { Course = course, Note = note });
             await dbContext.SaveChangesAsync();
 
-            return result.Ok();
+            return ServiceResult.Ok();
         }
 
         public async Task<ServiceResult> Like(int id)
         {
-            var result = new ServiceResult();
-
             var course = await courses.FindAsync(id);
 
-            if (course == null) return result.NotFound();
+            if (course == null) return ServiceResult.NotFound();
 
             var user = await userManager.GetUserAsync(httpContext.User);
 
-            if (course.Author.Id == user.Id) return result.BadRequest();
+            if (course.Author.Id == user.Id) return ServiceResult.BadRequest();
 
             var courseLike = course.Likes.FirstOrDefault(cl => cl.User.Id == user.Id);
 
-            if (courseLike != null) return result.BadRequest();
+            if (courseLike != null) return ServiceResult.BadRequest();
 
             course.Likes.Add(new CourseLike { Course = course, User = user });
             await dbContext.SaveChangesAsync();
 
-            return result.Ok();
+            return ServiceResult.Ok();
         }
 
         public async Task<ServiceResult<int>> Practice(int id, AnswerAttempt[] answers)

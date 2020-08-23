@@ -266,7 +266,7 @@ namespace CheckNote.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TestResult");
+                    b.ToTable("TestResults");
                 });
 
             modelBuilder.Entity("CheckNote.Shared.Models.User", b =>

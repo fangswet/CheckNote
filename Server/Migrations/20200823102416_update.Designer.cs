@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CheckNote.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200821151119_update")]
+    [Migration("20200823102416_update")]
     partial class update
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -268,7 +268,7 @@ namespace CheckNote.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TestResult");
+                    b.ToTable("TestResults");
                 });
 
             modelBuilder.Entity("CheckNote.Shared.Models.User", b =>

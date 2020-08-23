@@ -231,7 +231,7 @@ namespace CheckNote.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TestResult",
+                name: "TestResults",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -243,15 +243,15 @@ namespace CheckNote.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TestResult", x => x.Id);
+                    table.PrimaryKey("PK_TestResults", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TestResult_Courses_CourseId",
+                        name: "FK_TestResults_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_TestResult_AspNetUsers_UserId",
+                        name: "FK_TestResults_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -455,13 +455,13 @@ namespace CheckNote.Server.Migrations
                 column: "NoteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TestResult_CourseId",
-                table: "TestResult",
+                name: "IX_TestResults_CourseId",
+                table: "TestResults",
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TestResult_UserId",
-                table: "TestResult",
+                name: "IX_TestResults_UserId",
+                table: "TestResults",
                 column: "UserId");
         }
 
@@ -495,7 +495,7 @@ namespace CheckNote.Server.Migrations
                 name: "Sources");
 
             migrationBuilder.DropTable(
-                name: "TestResult");
+                name: "TestResults");
 
             migrationBuilder.DropTable(
                 name: "Questions");

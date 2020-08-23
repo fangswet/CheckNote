@@ -1,10 +1,7 @@
 ﻿using CheckNote.Server.Services;
 using CheckNote.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace CheckNote.Server.Controllers

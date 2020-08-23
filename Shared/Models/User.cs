@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace CheckNote.Shared.Models
@@ -12,12 +11,14 @@ namespace CheckNote.Shared.Models
         public virtual List<CourseLike> Likes { get; set; }
         public virtual List<TestResult> TestResults { get; set; }
 
-        public static implicit operator UserModel(User user) => new UserModel
+        public UserModel Sanitize() => new UserModel
         {
-            Id = user.Id,
-            UserName = user.UserName,
-            Email = user.Email
+            Id = Id,
+            UserName = UserName,
+            Email = Email
         };
+
+        public static implicit operator UserModel(User user) => user.Sanitize();
 
         public static implicit operator UserNotesModel(User user)
         {

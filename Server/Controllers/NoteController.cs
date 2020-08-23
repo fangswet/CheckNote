@@ -26,7 +26,14 @@ namespace CheckNote.Server.Controllers
 
         [Route("{id}")]
         public async Task<IActionResult> Get(int id)
-            => await noteService.Get(id);
+        {
+            var serviceResult = await noteService.Get(id);
+
+            var sr = serviceResult.Sanitize();
+            var ar = Ok(serviceResult.Sanitize().Value);
+
+            return ar;
+        }
 
         [HttpPost]
         public async Task<IActionResult> Add(NoteModel input) 

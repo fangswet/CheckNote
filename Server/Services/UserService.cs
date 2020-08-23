@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CheckNote.Server.Services
 {
-    public class UserService : CheckNoteService
+    public class UserService
     {
         private readonly UserManager<User> userManager;
         private readonly HttpContext httpContext;
@@ -18,36 +18,40 @@ namespace CheckNote.Server.Services
             httpContext = httpContextAccessor.HttpContext;
         }
 
-        public async Task<ServiceResult<User>> Get(int id)
+        public async Task<ServiceResult<User, UserModel>> Get(int id)
         {
+            var result = new ServiceResult<User, UserModel>();
+
             var user = await userManager.FindByIdAsync(id.ToString());
 
-            if (user == null) return NotFound<User>();
+            if (user == null) return result.NotFound();
 
-            return Ok(user);
+            return result.Ok(user);
         }
 
         public async Task<ServiceResult<List<Note>>> Notes(int id)
         {
+            var result = new ServiceResult<List<Note>>();
+
             var user = await userManager.FindByIdAsync(id.ToString());
 
-            if (user == null) return NotFound<List<Note>>();
+            if (user == null) return result.NotFound();
 
-            return Ok(user.Notes);
+            return result.Ok(user.Notes);
         }
 
-        public async Task<ServiceResult<User>> Me()
-            => Ok(await userManager.GetUserAsync(httpContext.User));
+        public async Task<ServiceResult<User, UserModel>> Me()
+            => new ServiceResult<User, UserModel>().Ok(await userManager.GetUserAsync(httpContext.User));
 
         public async Task<ServiceResult> Elevate(int id)
         {
             var user = await userManager.FindByIdAsync(id.ToString());
 
-            if (user == null) return NotFound();
+            if (user == null) return ServiceResult.NotFound();
 
             await userManager.AddToRoleAsync(user, Role.Admin);
 
-            return Ok();
+            return ServiceResult.Ok();
         }
     }
 }

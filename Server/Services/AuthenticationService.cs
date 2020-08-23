@@ -21,22 +21,20 @@ namespace CheckNote.Server.Services
 
         public async Task<ServiceResult> Login(LoginModel input)
         {
-            var result = new ServiceResult();
-
             var user = await userManager.FindByEmailAsync(input.Email);
-            if (user == null) return result.Unauthorized();
+            if (user == null) return new NotFoundServiceResult();
 
             var login = await signInManager.PasswordSignInAsync(user, input.Password, false, false);
 
-            return login.Succeeded ? result.Ok() : result.Unauthorized();
+            if (login.Succeeded) return ServiceResult.Ok();
+
+            return ServiceResult.Unauthorized();
         }
 
         public async Task<ServiceResult> Register(RegisterModel input)
         {
-            var result = new ServiceResult();
-
             if ((await userManager.FindByEmailAsync(input.Email)) != null || (await userManager.FindByNameAsync(input.UserName)) != null)
-                return result.Conflict("user already exists");
+                return ServiceResult.Conflict("user already exists");
 
             var user = new User
             {
@@ -46,14 +44,14 @@ namespace CheckNote.Server.Services
 
             await userManager.CreateAsync(user, input.Password);
 
-            return result.Ok();
+            return ServiceResult.Ok();
         }
 
         public async Task<ServiceResult> Logout()
         {
             await signInManager.SignOutAsync();
 
-            return new ServiceResult().Ok();
+            return ServiceResult.Ok();
         }
 
         [HttpPost]
