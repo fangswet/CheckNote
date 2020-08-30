@@ -1,19 +1,16 @@
+using CheckNote.Server.Services;
+using CheckNote.Shared.Models;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using CheckNote.Shared.Models;
-using Microsoft.AspNetCore.Identity;
-using System.Net.Http;
-using System;
-using Microsoft.AspNetCore.Components;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Net.Http;
 using System.Text;
-using CheckNote.Server.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace CheckNote.Server
 {
@@ -61,16 +58,18 @@ namespace CheckNote.Server
 
             services.ConfigureApplicationCookie(options => options.LoginPath = "/");
 
-            services.AddControllersWithViews(options =>
-            {
-                var schemes = new[] { IdentityConstants.ApplicationScheme, JwtBearerDefaults.AuthenticationScheme };
+            //services.AddControllersWithViews(options =>
+            //{
+            //    var schemes = new[] { IdentityConstants.ApplicationScheme, JwtBearerDefaults.AuthenticationScheme };
 
-                var policy = new AuthorizationPolicyBuilder()
-                    .AddAuthenticationSchemes(schemes)
-                    .RequireAuthenticatedUser();
+            //    var policy = new AuthorizationPolicyBuilder()
+            //        .AddAuthenticationSchemes(schemes)
+            //        .RequireAuthenticatedUser();
 
-                options.Filters.Add(new AuthorizeFilter(policy.Build()));
-            });
+            //    options.Filters.Add(new AuthorizeFilter(policy.Build()));
+            //});
+
+            services.AddControllersWithViews().AddNewtonsoftJson();
             
             services.AddRazorPages();
 
@@ -82,6 +81,9 @@ namespace CheckNote.Server
             );
 
             services.AddScoped<JwtService>();
+            services.AddScoped<QuestionService>();
+            services.AddScoped<UserService>();
+            services.AddScoped<CourseService>();
             services.AddScoped<AuthenticationService>();
             services.AddScoped<NoteService>();
         }

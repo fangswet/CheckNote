@@ -1,10 +1,41 @@
 ﻿@page "/login"
 
+@inject HttpClient httpClient 
+@inject NavigationManager navigationManager
+
+@using CheckNote.Shared.Models.Authentication
+
 @* try to move this *@ 
 <h3>login</h3>
 
-<form action="" method="post">
-    <input name="email" placeholder="email" />
-    <input name="password" type="password" placeholder="password" />
-    <button type="submit">login</button>
-</form>
+@* make form *@
+<div>
+    <input @bind="Email" type="email" placeholder="email" required />
+    <input @bind="Password" type="password" placeholder="password" required />
+    <button @onclick="Log">login</button>
+</div>
+
+<span>@Message</span>
+
+@code
+{
+    private string Email { get; set; }
+    private string Password { get; set; }
+    private string Message { get; set; }
+
+    private async void Log()
+    {
+        var input = new LoginModel
+        {
+            Email = Email,
+            Password = Password
+        };
+
+        var result = await httpClient.PostAsJsonAsync("/api/login", input);
+
+        if (result.IsSuccessStatusCode)
+            navigationManager.NavigateTo("/");
+        else
+            Message = "failed login";
+    }
+}

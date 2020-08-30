@@ -1,0 +1,31 @@
+﻿@page "/"
+@page "/notes"
+
+@inject HttpClient httpClient
+
+@using CheckNote.Shared.Models
+
+
+@if (empty)
+{
+    <span>no notes</span>
+}
+else
+{
+    @foreach (var note in notes)
+    {
+        <NoteEntry Note="note"></NoteEntry>
+    }
+}
+
+@code
+{
+    private NoteEntryModel[] notes = new NoteEntryModel[0];
+    private bool empty = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        notes = await httpClient.GetFromJsonAsync<NoteEntryModel[]>("api/note");
+        if (notes.Length <= 0) empty = true;
+    }
+}

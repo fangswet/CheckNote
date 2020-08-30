@@ -18,16 +18,13 @@ namespace CheckNote.Server.Controllers
         }
 
         [Route("{id:int}")]
-        public async Task<IActionResult> Get(int id)
-            => await questionService.Get(id);
+        public async Task<IActionResult> Get(int id) => (await questionService.Get(id)).Result();
 
         [HttpPost]
-        public async Task<IActionResult> Add(QuestionModel question)
-            => await questionService.Add(question);
+        public async Task<IActionResult> Add(QuestionModel question) => (await questionService.Add(question)).Result();
 
         [HttpPost]
         [Route("{id:int}")]
-        public async Task<IActionResult> Answer(int id, AnswerAttempt attempt)
-            => await questionService.Answer(id, attempt);
+        public async Task<IActionResult> Answer(int id, AnswerAttempt attempt) => (await questionService.Answer(id, attempt)).Result();
     }
 }

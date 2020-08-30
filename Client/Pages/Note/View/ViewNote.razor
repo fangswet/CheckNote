@@ -1,0 +1,33 @@
+﻿@page "/note/{id:int}"
+
+@inject HttpClient http
+
+@using CheckNote.Shared.Models
+
+@if (notFound)
+{
+    <NotFoundMessage></NotFoundMessage>
+}
+else
+{
+    <div>
+        <h1>@note?.Title</h1>
+        <h3>@note?.Author?.UserName</h3>
+        
+        <p>@note?.Content</p>
+    </div>
+}
+
+@code
+{
+    [Parameter]
+    public int Id { get; set; }
+    private NoteModel note;
+    private bool notFound = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        note = await http.GetFromJsonAsync<NoteModel>($"/api/note/{Id}");
+        notFound = note == null;
+    }
+}

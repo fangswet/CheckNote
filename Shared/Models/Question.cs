@@ -1,48 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CheckNote.Shared.Models
 {
-    public class Question : ICheckNoteModel<QuestionModel>
-    {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [Required]
-        public string Title { get; set; }
-        [Required]
-        public int NoteId { get; set; }
-        public virtual Note Note { get; set; }
-        public string Content { get; set; }
-        [Required]
-        public QuestionType Type { get; set; }
-        public bool? Correct { get; set; }
-        public QuestionDifficulty Difficulty { get; set; }
-        public virtual List<Answer> Answers { get; set; }
-
-        public QuestionModel Sanitize() => new QuestionModel
-        {
-            Id = Id,
-            Title = Title,
-            NoteId = NoteId,
-            Content = Content,
-            Type = Type,
-            Correct = Correct,
-            Difficulty = Difficulty,
-            Answers = Answers.Select(a => (AnswerModel)a).ToList()
-        };
-
-        public static implicit operator QuestionModel(Question question) => question.Sanitize();
-    }
-
     public class QuestionModel
     {
         public int Id { get; set; }
         [Required]
         public string Title { get; set; }
-        //[Required] // write methods in models
+        [Required]
         public int NoteId { get; set; }
         public string Content { get; set; }
         public QuestionType Type { get; set; }

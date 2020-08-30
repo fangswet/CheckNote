@@ -1,0 +1,51 @@
+﻿@page "/addNote"
+
+@inject HttpClient httpClient
+@using CheckNote.Shared.Models
+
+<form @onsubmit:preventDefault>
+    <input @bind="model.Title" name="title" placeholder="title" required />
+    <input @bind="model.Description" name="description" placeholder="content" />
+    <br />
+    <textarea @bind="model.Content" name="content" placeholder="content" required></textarea>
+
+    @foreach (var question in model.Questions)
+    {
+
+    }
+</form>
+
+<br />
+<span>@message</span>
+
+@code 
+{
+    private string title;
+    private string content;
+    private string message;
+    private NoteModel model = new NoteModel();
+
+    private void AddQuestion()
+    {
+
+    }
+
+    private async void Add()
+    {
+        var input = new NoteModel
+        {
+            Title = title,
+            Content = content
+        };
+
+        var result = await httpClient.PostAsJsonAsync("/api/note", input);
+        var id = await result.Content.ReadAsStringAsync();
+
+        if (result.StatusCode == System.Net.HttpStatusCode.OK)
+            message = $"added note {id}";
+        else
+            message = "error";
+
+        StateHasChanged();
+    }
+}

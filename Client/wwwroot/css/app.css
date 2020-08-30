@@ -181,3 +181,8 @@ app {
         display: block;
     }
 }
+
+.note-entry:not(:first-child) {
+    display: block;
+    border-top: 3px solid black;
+}

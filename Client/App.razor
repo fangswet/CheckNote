@@ -1,10 +1,20 @@
+@inject HttpClient httpClient 
+
 <Router AppAssembly="@typeof(Program).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
     </Found>
     <NotFound>
         <LayoutView Layout="@typeof(MainLayout)">
-            <p>Sorry, there's nothing at this address.</p>
+            <NotFoundMessage></NotFoundMessage>
         </LayoutView>
     </NotFound>
 </Router>
+
+@code
+{
+    protected async override Task OnInitializedAsync()
+    {
+        await httpClient.PostAsJsonAsync("/api/login", new { Email = "admin@admin.com", Password = "admin" });
+    }
+}

@@ -1,0 +1,15 @@
+﻿@using CheckNote.Shared.Models
+
+<NavLink href="@($"/note/{@Note.Id}")" class="note-entry">
+    <div>
+        <span>@Note.Title</span><br />
+        <span>@Note.Author.UserName</span><br />
+        <span>@Note.Description</span>
+    </div>
+</NavLink>
+
+@code
+{
+    [Parameter]
+    public NoteEntryModel Note { get; set; }
+}

@@ -1,0 +1,33 @@
+﻿@namespace CheckNote.Client
+
+@using CheckNote.Shared.Models
+
+<div>
+    <input @bind="Question.Title" placeholder="title" />
+    <input @bind="Question.Content" placeholder="content" />
+    <input type="number" min="@QuestionDifficulty.Easy" max="@QuestionDifficulty.Bonus" @bind="Question.Difficulty" placeholder="difficulty" />
+    <select @bind="Question.Type">
+        <option value="@QuestionType.Binary">binary</option>
+        <option value="@QuestionType.Single">single</option>
+        <option value="@QuestionType.Multiple">multiple</option>
+        <option value="@QuestionType.SingleInput">input</option>
+        <option value="@QuestionType.MultipleInput">multiple input</option>
+    </select>
+    @switch (Question.Type)
+    {
+        case QuestionType.Binary:
+            <input type="checkbox" @bind="Answers.Correct" />
+            break;
+
+    }
+</div>
+
+@code
+{
+    [Parameter]
+    public QuestionModel Question { get; set; }
+    [Parameter]
+    public AnswerAttempt Answers { get; set; }
+
+
+}

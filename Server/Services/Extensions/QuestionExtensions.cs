@@ -8,13 +8,10 @@ namespace CheckNote.Server.Services.Extensions
     {
         public static bool Answer(this Question question, AnswerAttempt attempt)
         {
-            if (question.Type == QuestionType.Binary)
-            {
-                return attempt.Correct != null && question.Correct == attempt.Correct;
-            }
-
             switch (question.Type)
             {
+                case QuestionType.Binary:
+                    return attempt.Correct != null && question.Correct == attempt.Correct;
                 case QuestionType.Single:
                 case QuestionType.Multiple:
 

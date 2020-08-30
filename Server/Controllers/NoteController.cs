@@ -23,32 +23,24 @@ namespace CheckNote.Server.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Get() 
-            => Ok(await notes.Select(n => n.Sanitize()).ToListAsync());
+        public async Task<IActionResult> Get() => (await noteService.GetEntries()).Result();
 
         [Route("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id, [FromQuery] bool verbose = false)
         {
-            var serviceResult = await noteService.Get(id);
+            var note = await noteService.Get(id);
 
-            return serviceResult.Sanitize();
+            return verbose ? note.Result() : note.SanitizeResult();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(NoteModel input) 
-            => await noteService.Add(input);
+        public async Task<IActionResult> Add(NoteModel input) => (await noteService.Add(input)).Result();
 
         [Route("{id:int}/[action]")]
-        public async Task<IActionResult> Questions(int id)
-        {
-            var serviceResult = await noteService.GetQuestions(id);
-
-            return serviceResult;
-        }
+        public async Task<IActionResult> Questions(int id) => (await noteService.GetQuestions(id)).SanitizeResult();
 
         [Route("{id:int}/[action]")]
-        public async Task<IActionResult> Practice(int id, AnswerAttempt[] answers)
-            => await noteService.Practice(id, answers);
+        public async Task<IActionResult> Practice(int id, AnswerAttempt[] answers) => (await noteService.Practice(id, answers)).Result();
 
         //[HttpDelete]
         //[Route("{id}")]

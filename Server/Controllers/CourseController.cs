@@ -1,11 +1,9 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using CheckNote.Server.Services;
+﻿using CheckNote.Server.Services;
 using CheckNote.Shared.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CheckNote.Server.Controllers
 {
@@ -22,39 +20,30 @@ namespace CheckNote.Server.Controllers
             courses = dbContext.Courses;
         }
 
-        public async Task<IActionResult> Get()
-            => Ok(await courses.Select(s => (CourseModel)s).ToListAsync());
+        public async Task<IActionResult> Get() => Ok(await courses.Select(s => (CourseModel)s).ToListAsync());
 
         [Route("{id:int}")]
-        public async Task<IActionResult> Get(int id)
-            => await courseService.Get(id);
+        public async Task<IActionResult> Get(int id) => (await courseService.Get(id)).Result();
 
         [Route("{id:int}/[action]")]
-        public async Task<IActionResult> Notes(int id)
-            => await courseService.GetNotes(id);
+        public async Task<IActionResult> Notes(int id) => (await courseService.GetNotes(id)).Result();
 
         [Route("{id:int}/[action]")]
-        public async Task<IActionResult> Questions(int id)
-            => await courseService.GetQuestions(id);
+        public async Task<IActionResult> Questions(int id) => (await courseService.GetQuestions(id)).Result();
 
         [HttpPost]
-        public async Task<IActionResult> Add(CourseModel input)
-            => await courseService.Add(input);
+        public async Task<IActionResult> Add(CourseModel input) => (await courseService.Add(input)).Result();
 
         [Route("{id:int}/[action]/{noteId:int}")]
-        public async Task<IActionResult> AddNote(int id, int noteId)
-            => await courseService.AddNote(id, noteId);
+        public async Task<IActionResult> AddNote(int id, int noteId) => (await courseService.AddNote(id, noteId)).Result();
 
         [Route("{id:int}/[action]")]
-        public async Task<IActionResult> Like(int id)
-            => await courseService.Like(id);
+        public async Task<IActionResult> Like(int id) => (await courseService.Like(id)).Result();
 
         [Route("{id:int}/[action]")]
-        public async Task<IActionResult> Practice(int id, AnswerAttempt[] answers)
-            => await courseService.Practice(id, answers);
+        public async Task<IActionResult> Practice(int id, AnswerAttempt[] answers) => (await courseService.Practice(id, answers)).Result();
 
         [Route("{id:int}/[action]")]
-        public async Task<IActionResult> Test(int id, AnswerAttempt[] answers)
-            => await courseService.Test(id, answers);
+        public async Task<IActionResult> Test(int id, AnswerAttempt[] answers) => (await courseService.Test(id, answers)).Result();
     }
 }

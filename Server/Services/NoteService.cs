@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CheckNote.Server.Services
@@ -21,6 +22,12 @@ namespace CheckNote.Server.Services
             this.userManager = userManager;
             notes = dbContext.Notes;
             httpContext = httpContextAccessor.HttpContext;
+        }
+
+        public async Task<ServiceResult<List<NoteEntryModel>>> GetEntries()
+        {
+            var allNotes = await notes.Select(n => (NoteEntryModel)n).ToListAsync();
+            return new ServiceResult<List<NoteEntryModel>>().Ok(allNotes);
         }
 
         public async Task<ServiceResult<Note, NoteModel>> Get(int id)

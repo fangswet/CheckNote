@@ -18,20 +18,16 @@ namespace CheckNote.Server.Controllers
         }
 
         [Route("{id:int}")]
-        public async Task<IActionResult> Get(int id)
-            => await userService.Get(id);
+        public async Task<IActionResult> Get(int id) => (await userService.Get(id)).Result();
 
         [Route("{id:int}/[action]")]
-        public async Task<IActionResult> Notes(int id)
-            => await userService.Notes(id);
+        public async Task<IActionResult> Notes(int id) => (await userService.GetNotes(id)).Result();
 
         [Route("[action]")]
-        public async Task<IActionResult> Me()
-            => await userService.Me();
+        public async Task<IActionResult> Me() => (await userService.Me()).Result();
 
         [Authorize(Roles = Role.Admin)]
         [Route("[action]/{id:int}")]
-        public async Task<IActionResult> Elevate(int id)
-            => await userService.Elevate(id);
+        public async Task<IActionResult> Elevate(int id) => (await userService.Elevate(id)).Result();
     }
 }

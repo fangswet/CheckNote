@@ -29,7 +29,7 @@ namespace CheckNote.Server.Services
             return result.Ok(user);
         }
 
-        public async Task<ServiceResult<List<Note>>> Notes(int id)
+        public async Task<ServiceResult<List<Note>>> GetNotes(int id)
         {
             var result = new ServiceResult<List<Note>>();
 
